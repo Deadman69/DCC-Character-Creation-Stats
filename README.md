@@ -1,4 +1,4 @@
-###To get level of the SPECIAL stat for each player use:
+### To get level of the SPECIAL stat for each player use:
 - ply.MetroStatsStrength        -> Int
 - ply.MetroStatsPerception      -> Int
 - ply.MetroStatsEndurance       -> Int
