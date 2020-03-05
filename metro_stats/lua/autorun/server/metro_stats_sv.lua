@@ -98,6 +98,13 @@ hook.Add( "PlayerSpawn", "Metro::StatsHook::PlayerSpawn", function(ply)
 						INSERT INTO MetroStatsCharacters(StatsSteamID, StatsCharID)
 						VALUES(']]..ply:SteamID64()..[[', ']]..ply:GetNWInt("Metro::CharacterID")..[[')
 					]])
+					ply.MetroStatsStrength = 0
+					ply.MetroStatsPerception = 0
+					ply.MetroStatsEndurance = 0
+					ply.MetroStatsCharisma = 0
+					ply.MetroStatsIntelligence = 0
+					ply.MetroStatsAgility = 0
+					ply.MetroStatsLuck = 0
 				else -- if character has been registered
 					-- Strength
 					ply.MetroStatsStrength = query[1]["StatsStrength"]
@@ -105,11 +112,13 @@ hook.Add( "PlayerSpawn", "Metro::StatsHook::PlayerSpawn", function(ply)
 					-- Perception
 					local calcul = ply:Armor() + MConf.StatsPerceptionAugmentationPerLevel * query[1]["StatsPerception"]
 					ply:SetArmor(calcul)
+					ply.MetroStatsPerception = query[1]["StatsPerception"]
 
 					-- Endurance
 					calcul = ply:Health() + MConf.StatsEnduranceAugmentationPerLevel * query[1]["StatsEndurance"]
 					ply:SetHealth(calcul)
 					ply:SetMaxHealth(calcul)
+					ply.MetroStatsEndurance = query[1]["StatsEndurance"]
 
 					-- Charisma
 					ply.MetroStatsCharisma = query[1]["StatsCharisma"]
@@ -121,6 +130,7 @@ hook.Add( "PlayerSpawn", "Metro::StatsHook::PlayerSpawn", function(ply)
 					local runSpeed = ply:GetRunSpeed()
 					calcul = runSpeed + (runSpeed/100*MConf.StatsAgilityAugmentationPerLevel) * query[1]["StatsAgility"]
 					ply:SetRunSpeed(calcul)
+					ply.MetroStatsAgility = query[1]["StatsAgility"]
 
 					-- Luck
 					ply.MetroStatsLuck = query[1]["StatsLuck"]

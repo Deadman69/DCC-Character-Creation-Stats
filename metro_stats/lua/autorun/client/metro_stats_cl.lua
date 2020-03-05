@@ -4,6 +4,11 @@ AddCSLuaFile("metro_config/metro_config_stats.lua")
 
 
 --[[ Create Font ]]
+surface.CreateFont( "FalloutFont20", {
+	font = "Overseer",
+	size = 20,
+})
+
 surface.CreateFont( "FalloutFont30", {
 	font = "Overseer",
 	size = 30,
@@ -15,7 +20,8 @@ surface.CreateFont( "FalloutFont40", {
 })
 
 --[[ Var Creation ]]
-local S, P, E, C, I, A, L, FreePoints -- Level wich will be sended
+local S, P, E, C, I, A, L, FreePoints -- Level wich will be sended and used
+local Description = ""
 
 
 
@@ -224,7 +230,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 
 
 	local resetButton = vgui.Create( "DButton", mainPanel )
-	resetButton:SetText( "RESET" )
+	resetButton:SetText( "" )
 	resetButton:CenterHorizontal(0.4)
 	resetButton:CenterVertical(0.73)
 	resetButton:SetSize( 80, 50 )
@@ -233,12 +239,15 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 		S,P,E,C,I,A,L = 0,0,0,0,0,0,0
 	end
 	function resetButton:Paint( w, h )
-	    surface.SetDrawColor(255,193,20)
-    	surface.DrawRect(w, h, w, h)
+	    surface.SetDrawColor(3,48,5)
+    	surface.DrawRect(0, 0, w, h)
+
+    	draw.SimpleText( "RESET", "FalloutFont20", w/4, h/4, Color(16, 193, 20))
 	end
 
 	local applyButton = vgui.Create( "DButton", mainPanel )
-	applyButton:SetText( "APPLY" )
+	applyButton:SetText( "" )
+	--applyButton:SetFGColor( Color(16,193,20) )
 	applyButton:CenterHorizontal(0.5)
 	applyButton:CenterVertical(0.73)
 	applyButton:SetSize( 80, 50 )
@@ -262,30 +271,34 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 		gui.EnableScreenClicker( false )  -- disable mouse
 	end
 	function applyButton:Paint( w, h )
-	    surface.SetDrawColor(255,193,20)
-    	surface.DrawRect(w, h, w, h)
+	    surface.SetDrawColor(3,48,5)
+    	surface.DrawRect(0, 0, w, h)
+
+    	draw.SimpleText( "APPLY", "FalloutFont20", w/4, h/4, Color(16, 193, 20))
 	end
 
 	local healthButton = vgui.Create( "DButton", mainPanel )
-	healthButton:SetText( "HP "..LocalPlayer():Health().." / "..LocalPlayer():GetMaxHealth() )
+	healthButton:SetText( "" )
 	healthButton:CenterHorizontal(0.057)
 	healthButton:CenterVertical(0.9)
-	healthButton:SetSize( 330, 50 )
+	healthButton:SetSize( ScrW()/5.818, ScrH()/21.6 )
 	healthButton.DoClick = function()
 		mainPanel:Remove()
 		gui.EnableScreenClicker( false )  -- disable mouse
 	end
-	-- function healthButton:Paint( w, h )
-	--     surface.SetDrawColor(255,193,20)
- --    	surface.DrawRect(w, h, w, h)
-	-- end
+	function healthButton:Paint( w, h )
+	    surface.SetDrawColor(3,48,5)
+    	surface.DrawRect(0, 0, w, h)
+
+    	draw.SimpleText( "HP "..LocalPlayer():Health().." / "..LocalPlayer():GetMaxHealth(), "FalloutFont20", w/2.7, h/4, Color(16, 193, 20))
+	end
 
 	-- THIS ONE COMES SOON....
 	-- local inventoryPodsButton = vgui.Create( "DButton", mainPanel )
 	-- inventoryPodsButton:SetText("")
 	-- inventoryPodsButton:CenterHorizontal(0.378)
 	-- inventoryPodsButton:CenterVertical(0.9)
-	-- inventoryPodsButton:SetSize( 330, 50 )
+	-- inventoryPodsButton:SetSize( ScrW()/5.818, ScrH()/21.6 )
 	-- inventoryPodsButton.DoClick = function()
 	-- 	mainPanel:Remove()
 	-- 	gui.EnableScreenClicker( false )  -- disable mouse
@@ -296,25 +309,117 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	-- end
 
 	local armorButton = vgui.Create( "DButton", mainPanel )
-	armorButton:SetText( "Armor "..LocalPlayer():Armor().." / "..P*MConf.StatsPerceptionAugmentationPerLevel )
+	armorButton:SetText( "" )
 	armorButton:CenterHorizontal(0.7)
 	armorButton:CenterVertical(0.9)
-	armorButton:SetSize( 330, 50 )
+	armorButton:SetSize( ScrW()/5.818, ScrH()/21.6 )
 	armorButton.DoClick = function()
 		mainPanel:Remove()
 		gui.EnableScreenClicker( false )  -- disable mouse
 	end
 	function armorButton:Paint( w, h )
-	    surface.SetDrawColor(255,193,20)
-    	surface.DrawRect(w, h, w, h)
+	    surface.SetDrawColor(3,48,5)
+    	surface.DrawRect(0, 0, w, h)
+
+    	draw.SimpleText( "Armor "..LocalPlayer():Armor().." / "..P*MConf.StatsPerceptionAugmentationPerLevel, "FalloutFont20", w/2.7, h/4, Color(16, 193, 20))
 	end
 
 
 	local falloutImg = vgui.Create("DImage", mainPanel)
-	falloutImg:SetSize(200, 246)
+	falloutImg:SetSize(ScrW()/9.6, ScrH()/4.3902)
 	falloutImg:CenterHorizontal(0.75)
-	falloutImg:CenterVertical(0.5)
+	falloutImg:CenterVertical(0.3)
 	falloutImg:SetImage("deadman/metro_stats_fallout_pic.png")
+
+	--[[ Invisible button to trigger the RichText update ]]
+    local strengthInvisibleButton = vgui.Create( "DButton", mainPanel )
+	strengthInvisibleButton:SetText("")
+	strengthInvisibleButton:CenterHorizontal(0.05)
+	strengthInvisibleButton:CenterVertical(0.27)
+	strengthInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function strengthInvisibleButton:Paint() end
+
+	local perceptionInvisibleButton = vgui.Create( "DButton", mainPanel )
+	perceptionInvisibleButton:SetText("")
+	perceptionInvisibleButton:CenterHorizontal(0.05)
+	perceptionInvisibleButton:CenterVertical(0.325)
+	perceptionInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function perceptionInvisibleButton:Paint() end
+
+	local enduranceInvisibleButton = vgui.Create( "DButton", mainPanel )
+	enduranceInvisibleButton:SetText("")
+	enduranceInvisibleButton:CenterHorizontal(0.05)
+	enduranceInvisibleButton:CenterVertical(0.38)
+	enduranceInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function enduranceInvisibleButton:Paint() end
+
+	local charismaInvisibleButton = vgui.Create( "DButton", mainPanel )
+	charismaInvisibleButton:SetText("")
+	charismaInvisibleButton:CenterHorizontal(0.05)
+	charismaInvisibleButton:CenterVertical(0.44)
+	charismaInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function charismaInvisibleButton:Paint() end
+
+	local intelligenceInvisibleButton = vgui.Create( "DButton", mainPanel )
+	intelligenceInvisibleButton:SetText("")
+	intelligenceInvisibleButton:CenterHorizontal(0.05)
+	intelligenceInvisibleButton:CenterVertical(0.50)
+	intelligenceInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function intelligenceInvisibleButton:Paint() end
+
+	local agilityInvisibleButton = vgui.Create( "DButton", mainPanel )
+	agilityInvisibleButton:SetText("")
+	agilityInvisibleButton:CenterHorizontal(0.05)
+	agilityInvisibleButton:CenterVertical(0.56)
+	agilityInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function agilityInvisibleButton:Paint() end
+
+	local luckInvisibleButton = vgui.Create( "DButton", mainPanel )
+	luckInvisibleButton:SetText("")
+	luckInvisibleButton:CenterHorizontal(0.05)
+	luckInvisibleButton:CenterVertical(0.62)
+	luckInvisibleButton:SetSize( ScrW()/5, ScrH()/36 )
+	function luckInvisibleButton:Paint() end
+
+
+
+	--[[ Rich text for the description ]]
+	local richTextDescription = vgui.Create( "RichText", mainPanel)
+	richTextDescription:SetSize( ScrW()/4.5, ScrH()/6 )
+	function richTextDescription:PerformLayout()
+		self:SetFontInternal( "FalloutFont30" )
+	end
+	richTextDescription:SetVerticalScrollbarEnabled(false)
+    richTextDescription:CenterHorizontal(0.76)
+    richTextDescription:CenterVertical(0.7)
+    richTextDescription:InsertColorChange(16, 193, 20, 255)
+    richTextDescription:AppendText(Description)
+    function richTextDescription:Think()
+    	-- we can't put the \n\n\n here otherwise text don't appear
+		if strengthInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsStrengthDescription)
+		elseif perceptionInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsPerceptionDescription)
+		elseif enduranceInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsEnduranceDescription)
+		elseif charismaInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsCharismaDescription)
+		elseif intelligenceInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsIntelligenceDescription)
+		elseif agilityInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsAgilityDescription)
+		elseif luckInvisibleButton:IsHovered() then
+			self:AppendText("\n\n\n\n\n\n")
+			self:AppendText(MConf.StatsLuckDescription)
+		end
+	end
+
 
 
 
@@ -325,7 +430,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	sLeftButton:SetText("")
 	sLeftButton:CenterHorizontal(0.435)
 	sLeftButton:CenterVertical(0.27)
-	sLeftButton:SetSize( 25, 25 )
+	sLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	sLeftButton.DoClick = function()
 		decreasePoints("S")
 	end
@@ -334,7 +439,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	sRightButton:SetText("")
 	sRightButton:CenterHorizontal(0.52)
 	sRightButton:CenterVertical(0.27)
-	sRightButton:SetSize( 25, 25 )
+	sRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	sRightButton.DoClick = function()
 		increasePoints("S")
 	end
@@ -344,7 +449,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	pLeftButton:SetText("")
 	pLeftButton:CenterHorizontal(0.435)
 	pLeftButton:CenterVertical(0.325)
-	pLeftButton:SetSize( 25, 25 )
+	pLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	pLeftButton.DoClick = function()
 		decreasePoints("P")
 	end
@@ -353,7 +458,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	pRightButton:SetText("")
 	pRightButton:CenterHorizontal(0.52)
 	pRightButton:CenterVertical(0.325)
-	pRightButton:SetSize( 25, 25 )
+	pRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	pRightButton.DoClick = function()
 		increasePoints("P")
 	end
@@ -363,7 +468,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	eLeftButton:SetText("")
 	eLeftButton:CenterHorizontal(0.435)
 	eLeftButton:CenterVertical(0.38)
-	eLeftButton:SetSize( 25, 25 )
+	eLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	eLeftButton.DoClick = function()
 		decreasePoints("E")
 	end
@@ -372,7 +477,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	eRightButton:SetText("")
 	eRightButton:CenterHorizontal(0.52)
 	eRightButton:CenterVertical(0.38)
-	eRightButton:SetSize( 25, 25 )
+	eRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	eRightButton.DoClick = function()
 		increasePoints("E")
 	end
@@ -382,7 +487,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	cLeftButton:SetText("")
 	cLeftButton:CenterHorizontal(0.435)
 	cLeftButton:CenterVertical(0.44)
-	cLeftButton:SetSize( 25, 25 )
+	cLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	cLeftButton.DoClick = function()
 		decreasePoints("C")
 	end
@@ -391,7 +496,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	cRightButton:SetText("")
 	cRightButton:CenterHorizontal(0.52)
 	cRightButton:CenterVertical(0.44)
-	cRightButton:SetSize( 25, 25 )
+	cRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	cRightButton.DoClick = function()
 		increasePoints("C")
 	end
@@ -401,7 +506,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	iLeftButton:SetText("")
 	iLeftButton:CenterHorizontal(0.435)
 	iLeftButton:CenterVertical(0.50)
-	iLeftButton:SetSize( 25, 25 )
+	iLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	iLeftButton.DoClick = function()
 		decreasePoints("I")
 	end
@@ -410,7 +515,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	iRightButton:SetText("")
 	iRightButton:CenterHorizontal(0.52)
 	iRightButton:CenterVertical(0.50)
-	iRightButton:SetSize( 25, 25 )
+	iRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	iRightButton.DoClick = function()
 		increasePoints("I")
 	end
@@ -420,7 +525,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	aLeftButton:SetText("")
 	aLeftButton:CenterHorizontal(0.435)
 	aLeftButton:CenterVertical(0.56)
-	aLeftButton:SetSize( 25, 25 )
+	aLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	aLeftButton.DoClick = function()
 		decreasePoints("A")
 	end
@@ -429,7 +534,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	aRightButton:SetText("")
 	aRightButton:CenterHorizontal(0.52)
 	aRightButton:CenterVertical(0.56)
-	aRightButton:SetSize( 25, 25 )
+	aRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	aRightButton.DoClick = function()
 		increasePoints("A")
 	end
@@ -439,7 +544,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	lLeftButton:SetText("")
 	lLeftButton:CenterHorizontal(0.435)
 	lLeftButton:CenterVertical(0.62)
-	lLeftButton:SetSize( 25, 25 )
+	lLeftButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	lLeftButton.DoClick = function()
 		decreasePoints("L")
 	end
@@ -448,7 +553,7 @@ local function openMainMenu(Strength, Perception, Endurance, Charisma, Intellige
 	lRightButton:SetText("")
 	lRightButton:CenterHorizontal(0.52)
 	lRightButton:CenterVertical(0.62)
-	lRightButton:SetSize( 25, 25 )
+	lRightButton:SetSize( ScrW()/76.8, ScrH()/43.2 )
 	lRightButton.DoClick = function()
 		increasePoints("L")
 	end

@@ -35,27 +35,31 @@ MConf.StatsStrengthWeapons = { -- Weapons affected
 	["weapon_stunstick"] = true,
 	["weapon_fists"] = true,
 }
+MConf.StatsStrengthDescription = "Strength is a measure of your raw physical power. It affects how much you can carry, and the damage of all melee attacks."
 
 
 --[[ Perception part ]]
 MConf.StatsPerceptionAugmentationPerLevel = 10 -- Will increase base armor by 10 per level (limit to 255)
+MConf.StatsPerceptionDescription = "Perception is used...."
 
 
 --[[ Endurance part ]]
 MConf.StatsEnduranceAugmentationPerLevel = 10 -- Will increase base HP by 10 per level
+MConf.StatsEnduranceDescription = "Endurance is used...."
 
 
 --[[ Charisma part ]]
--- Charisma would decrease sale prices by 2.5% each time
+MConf.StatsCharismaDescription = "Charisma is used...."
 
 
 --[[ Intelligence part ]]
--- No effect for the moment
-
+MConf.StatsIntelligenceDescription = "Intelligence is used...."
 
 --[[ Agility part ]]
 MConf.StatsAgilityAugmentationPerLevel = 5 -- Will increase speed by +5% per level
+MConf.StatsAgilityDescription = "Agility is used...."
 
 
 --[[ Luck part ]]
 MConf.StatsLuckAugmentationPerLevel = 5 -- Will increase your salary by 5% per level
+MConf.StatsLuckDescription = "Luck is used...."
